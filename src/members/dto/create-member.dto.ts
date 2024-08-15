@@ -1,6 +1,6 @@
 import {
+  IsOptional,
   // decorators here
-
   IsString,
 } from 'class-validator';
 import {
@@ -19,11 +19,13 @@ export class CreateMemberDto {
   situacao: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   dataSaida: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   dataEntrada: string;
 
   @ApiProperty()
@@ -52,10 +54,12 @@ export class CreateMemberDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   dataBatismo: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   dataNascimento: string;
 
   @ApiProperty()

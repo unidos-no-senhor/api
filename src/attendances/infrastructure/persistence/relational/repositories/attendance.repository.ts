@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { AttendanceEntity } from '../entities/attendance.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { Attendance } from '../../../../domain/attendance';
 import { AttendanceRepository } from '../../attendance.repository';
 import { AttendanceMapper } from '../mappers/attendance.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
+import { EventEntity } from '../../../../../events/infrastructure/persistence/relational/entities/event.entity';
+import { ParticipantEntity } from '../entities/participant.entity';
 
 @Injectable()
 export class AttendanceRelationalRepository implements AttendanceRepository {
@@ -23,6 +25,30 @@ export class AttendanceRelationalRepository implements AttendanceRepository {
     return AttendanceMapper.toDomain(newEntity);
   }
 
+  async findByEventIdAndListOfParticipantIds(
+    eventId: EventEntity['id'],
+    participantIds: ParticipantEntity['id'][],
+  ): Promise<Attendance[]> {
+    return await this.attendanceRepository.findBy({
+      evento: eventId,
+      participante: In(participantIds),
+    });
+  }
+
+  async removeByEventId(eventId: EventEntity['id']): Promise<void> {
+    await this.attendanceRepository.delete({ evento: eventId });
+  }
+
+  async removeByEventAndParticipantId(
+    eventId: EventEntity['id'],
+    participantId: ParticipantEntity['id'],
+  ): Promise<void> {
+    await this.attendanceRepository.delete({
+      evento: eventId,
+      participante: participantId,
+    });
+  }
+
   async findAllWithPagination({
     paginationOptions,
   }: {
@@ -34,6 +60,15 @@ export class AttendanceRelationalRepository implements AttendanceRepository {
     });
 
     return entities.map((user) => AttendanceMapper.toDomain(user));
+  }
+
+  async findAllParticipantesInArray(
+    participantsIds: ParticipantEntity['id'][],
+  ): Promise<ParticipantEntity[]> {
+    const participants = await ParticipantEntity.findBy({
+      id: In(participantsIds),
+    });
+    return participants;
   }
 
   async findById(id: Attendance['id']): Promise<NullableType<Attendance>> {

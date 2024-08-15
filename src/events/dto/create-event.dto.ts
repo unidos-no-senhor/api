@@ -1,4 +1,5 @@
 import {
+  IsDateString,
   IsNotEmpty,
   // decorators here
   IsString,
@@ -11,8 +12,8 @@ import {
 
 export class CreateEventDto {
   @ApiProperty()
-  @ApiProperty()
-  @IsString()
+  @IsDateString()
+  @IsNotEmpty({ message: 'Data é obrigatório' })
   data: string;
 
   @ApiProperty()

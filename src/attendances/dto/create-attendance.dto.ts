@@ -1,7 +1,9 @@
 import {
-  // decorators here
-
+  IsArray,
+  IsNotEmpty,
+  IsNumberString,
   IsString,
+  IsUUID,
 } from 'class-validator';
 import {
   // decorators here
@@ -10,16 +12,19 @@ import {
 
 export class CreateAttendanceDto {
   @ApiProperty()
-  @ApiProperty()
-  @IsString()
-  responsavel_id: string;
+  @IsNumberString()
+  @IsNotEmpty()
+  responsavel: string;
 
   @ApiProperty()
-  @IsString()
-  participante_id: string;
+  @IsArray()
+  @IsNotEmpty()
+  participante: string[];
 
+  @IsUUID('4')
   @IsString()
-  evento_id: string;
+  @IsNotEmpty()
+  evento: string;
 
   // Don't forget to use the class-validator decorators in the DTO properties.
 }

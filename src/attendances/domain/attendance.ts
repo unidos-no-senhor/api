@@ -1,21 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Generated, OneToOne } from 'typeorm';
+import { Column, ManyToOne, OneToOne } from 'typeorm';
 import { MemberEntity } from '../../members/infrastructure/persistence/relational/entities/member.entity';
+import { EventEntity } from '../../events/infrastructure/persistence/relational/entities/event.entity';
 
 export class Attendance {
   @ApiProperty()
-  @Generated('uuid')
-  @Column()
-  @OneToOne(() => MemberEntity, (member) => member.id)
-  responsavel_id: string;
+  @Column('int4')
+  @ManyToOne(() => MemberEntity, (member) => member.id)
+  responsavel: string;
 
   @ApiProperty()
   @Column('uuid')
   @OneToOne(() => MemberEntity, (member) => member.id)
-  participante_id: string;
+  participante: string;
 
   @ApiProperty()
-  evento_id: string;
+  @Column('uuid')
+  @ManyToOne(() => EventEntity, (event) => event.id)
+  evento: string;
 
   @ApiProperty({
     type: String,

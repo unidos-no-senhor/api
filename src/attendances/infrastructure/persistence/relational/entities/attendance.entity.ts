@@ -4,9 +4,15 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   Column,
+  OneToOne,
+  ManyToOne,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { ApiProperty } from '@nestjs/swagger';
+import { ParticipantEntity } from './participant.entity';
+import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
+import { EventEntity } from '../../../../../events/infrastructure/persistence/relational/entities/event.entity';
+import { IsString } from 'class-validator';
 
 @Entity({
   name: 'attendance',
@@ -14,15 +20,19 @@ import { ApiProperty } from '@nestjs/swagger';
 export class AttendanceEntity extends EntityRelationalHelper {
   @ApiProperty()
   @Column()
-  responsavel_id: string;
+  @IsString()
+  @ManyToOne(() => UserEntity, (user) => user.id)
+  responsavel: string;
 
   @ApiProperty()
   @Column()
-  participante_id: string;
+  @OneToOne(() => ParticipantEntity, (participant) => participant.id)
+  participante: string;
 
   @ApiProperty()
   @Column()
-  evento_id: string;
+  @ManyToOne(() => EventEntity, (event) => event.id)
+  evento: string;
 
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')

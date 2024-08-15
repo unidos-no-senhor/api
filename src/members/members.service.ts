@@ -4,13 +4,20 @@ import { UpdateMemberDto } from './dto/update-member.dto';
 import { MemberRepository } from './infrastructure/persistence/member.repository';
 import { IPaginationOptions } from '../utils/types/pagination-options';
 import { Member } from './domain/member';
+import { ParticipantEntity } from '../attendances/infrastructure/persistence/relational/entities/participant.entity';
 
 @Injectable()
 export class MembersService {
   constructor(private readonly memberRepository: MemberRepository) {}
 
-  create(createMemberDto: CreateMemberDto) {
-    return this.memberRepository.create(createMemberDto);
+  async create(createMemberDto: CreateMemberDto) {
+    const member = await this.memberRepository.create(createMemberDto);
+    await ParticipantEntity.create({
+      nome: member.nome,
+      membro_id: member.id,
+    }).save();
+
+    return member;
   }
 
   findAllWithPagination({

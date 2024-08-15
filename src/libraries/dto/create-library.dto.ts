@@ -1,6 +1,7 @@
 import {
   IsBoolean,
   IsNumberString,
+  IsOptional,
   // decorators here
   IsString,
   MinLength,
@@ -18,26 +19,32 @@ export class CreateLibraryDto {
   titulo: string;
 
   @IsString()
+  @IsOptional()
   @ApiProperty()
   autor: string;
 
   @IsString()
+  @IsOptional()
   @ApiProperty()
   editora: string;
 
   @IsString()
+  @IsOptional()
   @ApiProperty()
   isbn: string;
 
   @IsNumberString()
+  @IsOptional()
   @ApiProperty()
   anoDeImpressao: string;
 
   @IsString()
+  @IsOptional()
   @ApiProperty()
   observacao: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsBoolean()
   reservado: boolean;
 }

@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsNumberString,
+  IsOptional,
   IsString,
   IsUUID,
   MinLength,
@@ -19,26 +20,32 @@ export class Library {
   titulo: string;
 
   @IsString()
+  @IsOptional()
   @ApiProperty()
   autor: string;
 
   @IsString()
+  @IsOptional()
   @ApiProperty()
   editora: string;
 
   @IsString()
+  @IsOptional()
   @ApiProperty()
   isbn: string;
 
   @IsNumberString()
+  @IsOptional()
   @ApiProperty()
   anoDeImpressao: string;
 
   @IsString()
+  @IsOptional()
   @ApiProperty()
   observacao: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsBoolean()
   reservado: boolean;
 

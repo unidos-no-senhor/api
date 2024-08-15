@@ -4,9 +4,9 @@ import { AttendanceEntity } from '../entities/attendance.entity';
 export class AttendanceMapper {
   static toDomain(raw: AttendanceEntity): Attendance {
     const domainEntity = new Attendance();
-    domainEntity.responsavel_id = raw.responsavel_id;
-    domainEntity.participante_id = raw.participante_id;
-    domainEntity.evento_id = raw.evento_id;
+    domainEntity.responsavel = raw.responsavel;
+    domainEntity.participante = raw.participante;
+    domainEntity.evento = raw.evento;
     domainEntity.id = raw.id;
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
@@ -16,9 +16,9 @@ export class AttendanceMapper {
 
   static toPersistence(domainEntity: Attendance): AttendanceEntity {
     const persistenceEntity = new AttendanceEntity();
-    persistenceEntity.responsavel_id = domainEntity.responsavel_id;
-    persistenceEntity.participante_id = domainEntity.participante_id;
-    persistenceEntity.evento_id = domainEntity.evento_id;
+    persistenceEntity.responsavel = domainEntity.responsavel;
+    persistenceEntity.participante = domainEntity.participante;
+    persistenceEntity.evento = domainEntity.evento;
     if (domainEntity.id) {
       persistenceEntity.id = domainEntity.id;
     }
