@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Query,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { LibrariesService } from './libraries.service';
 import { CreateLibraryDto } from './dto/create-library.dto';
@@ -27,10 +28,11 @@ import {
 } from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { FindAllLibrariesDto } from './dto/find-all-libraries.dto';
+import { RolesGuard } from '../roles/roles.guard';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
 
 @ApiTags('Libraries')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
 @Controller({
   path: 'libraries',
   version: '1',
@@ -42,11 +44,15 @@ export class LibrariesController {
   @ApiCreatedResponse({
     type: Library,
   })
+  @ApiBearerAuth()
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   create(@Body() createLibraryDto: CreateLibraryDto) {
     return this.librariesService.create(createLibraryDto);
   }
 
   @Get()
+  @UseGuards()
   @ApiOkResponse({
     type: InfinityPaginationResponse(Library),
   })
@@ -55,8 +61,8 @@ export class LibrariesController {
   ): Promise<InfinityPaginationResponseDto<Library>> {
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
+    if (limit > 200) {
+      limit = 200;
     }
 
     return infinityPagination(
@@ -73,36 +79,45 @@ export class LibrariesController {
   @Get(':id')
   @ApiParam({
     name: 'id',
-    type: String,
+    type: 'uuid',
     required: true,
   })
   @ApiOkResponse({
     type: Library,
   })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.librariesService.findOne(id);
   }
 
   @Patch(':id')
   @ApiParam({
     name: 'id',
-    type: String,
+    type: 'uuid',
     required: true,
   })
   @ApiOkResponse({
     type: Library,
   })
-  update(@Param('id') id: string, @Body() updateLibraryDto: UpdateLibraryDto) {
+  @ApiBearerAuth()
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateLibraryDto: UpdateLibraryDto,
+  ) {
     return this.librariesService.update(id, updateLibraryDto);
   }
 
   @Delete(':id')
   @ApiParam({
     name: 'id',
-    type: String,
+    type: 'uuid',
     required: true,
   })
-  remove(@Param('id') id: string) {
+  @ApiBearerAuth()
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.librariesService.remove(id);
   }
 }

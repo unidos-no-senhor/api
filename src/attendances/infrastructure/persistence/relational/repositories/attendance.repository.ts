@@ -9,6 +9,7 @@ import { AttendanceMapper } from '../mappers/attendance.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
 import { EventEntity } from '../../../../../events/infrastructure/persistence/relational/entities/event.entity';
 import { ParticipantEntity } from '../entities/participant.entity';
+import { FindAllAttendancesDto } from '../../../../dto/find-all-attendances.dto';
 
 @Injectable()
 export class AttendanceRelationalRepository implements AttendanceRepository {
@@ -35,7 +36,7 @@ export class AttendanceRelationalRepository implements AttendanceRepository {
     });
   }
 
-  async removeByEventId(eventId: EventEntity['id']): Promise<void> {
+  async removeParticipantsByEventId(eventId: EventEntity['id']): Promise<void> {
     await this.attendanceRepository.delete({ evento: eventId });
   }
 
@@ -51,10 +52,15 @@ export class AttendanceRelationalRepository implements AttendanceRepository {
 
   async findAllWithPagination({
     paginationOptions,
+    query,
   }: {
     paginationOptions: IPaginationOptions;
+    query: FindAllAttendancesDto;
   }): Promise<Attendance[]> {
     const entities = await this.attendanceRepository.find({
+      where: {
+        evento: query.evento,
+      },
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
     });
@@ -69,6 +75,19 @@ export class AttendanceRelationalRepository implements AttendanceRepository {
       id: In(participantsIds),
     });
     return participants;
+  }
+
+  async findAllParticipantsWithPagination({
+    paginationOptions,
+  }: {
+    paginationOptions: IPaginationOptions;
+  }): Promise<ParticipantEntity[]> {
+    const entities = await ParticipantEntity.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+    });
+
+    return entities;
   }
 
   async findById(id: Attendance['id']): Promise<NullableType<Attendance>> {

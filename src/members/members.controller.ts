@@ -27,10 +27,14 @@ import {
 } from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { FindAllMembersDto } from './dto/find-all-members.dto';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
+import { RolesGuard } from '../roles/roles.guard';
 
 @ApiTags('Members')
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+@Roles(RoleEnum.admin, RoleEnum.user)
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({
   path: 'members',
   version: '1',
@@ -55,8 +59,8 @@ export class MembersController {
   ): Promise<InfinityPaginationResponseDto<Member>> {
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
+    if (limit > 200) {
+      limit = 200;
     }
 
     return infinityPagination(

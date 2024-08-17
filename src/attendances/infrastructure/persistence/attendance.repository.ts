@@ -3,6 +3,7 @@ import { DeepPartial } from '../../../utils/types/deep-partial.type';
 import { NullableType } from '../../../utils/types/nullable.type';
 import { IPaginationOptions } from '../../../utils/types/pagination-options';
 import { Attendance } from '../../domain/attendance';
+import { FindAllAttendancesDto } from '../../dto/find-all-attendances.dto';
 import { ParticipantEntity } from './relational/entities/participant.entity';
 
 export abstract class AttendanceRepository {
@@ -12,8 +13,10 @@ export abstract class AttendanceRepository {
 
   abstract findAllWithPagination({
     paginationOptions,
+    query,
   }: {
     paginationOptions: IPaginationOptions;
+    query?: FindAllAttendancesDto;
   }): Promise<Attendance[]>;
 
   abstract findByEventIdAndListOfParticipantIds(
@@ -30,7 +33,9 @@ export abstract class AttendanceRepository {
 
   abstract remove(id: Attendance['id']): Promise<void>;
 
-  abstract removeByEventId(eventId: EventEntity['id']): Promise<void>;
+  abstract removeParticipantsByEventId(
+    eventId: EventEntity['id'],
+  ): Promise<void>;
 
   abstract removeByEventAndParticipantId(
     eventId: EventEntity['id'],
@@ -40,4 +45,10 @@ export abstract class AttendanceRepository {
   abstract findAllParticipantesInArray(
     participantsIds: ParticipantEntity['id'][],
   ): Promise<ParticipantEntity[]>;
+
+  abstract findAllParticipantsWithPagination({
+    paginationOptions,
+  }: {
+    paginationOptions: IPaginationOptions;
+  }): Promise<ParticipantEntity[]>;
 }

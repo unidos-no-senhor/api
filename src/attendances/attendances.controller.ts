@@ -9,6 +9,7 @@ import {
   Query,
   HttpException,
   HttpStatus,
+  Request,
 } from '@nestjs/common';
 import { AttendancesService } from './attendances.service';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
@@ -29,6 +30,7 @@ import { infinityPagination } from '../utils/infinity-pagination';
 import { FindAllAttendancesDto } from './dto/find-all-attendances.dto';
 import { EventsService } from '../events/events.service';
 import { ParticipantEntity } from './infrastructure/persistence/relational/entities/participant.entity';
+import { AuthService } from '../auth/auth.service';
 
 @ApiTags('Attendances')
 @ApiBearerAuth()
@@ -41,13 +43,22 @@ export class AttendancesController {
   constructor(
     private readonly attendancesService: AttendancesService,
     private readonly eventsService: EventsService,
+    private readonly authService: AuthService,
   ) {}
 
   @Post()
   @ApiCreatedResponse({
     type: Attendance,
   })
-  async upsert(@Body() createAttendanceDto: CreateAttendanceDto) {
+  async upsert(
+    @Body() createAttendanceDto: CreateAttendanceDto,
+    @Request() request,
+  ) {
+    //get user id from token
+    const user = await this.authService.me(request.user);
+    if (!user) {
+      throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND);
+    }
     const evento = await this.eventsService.findOne(createAttendanceDto.evento);
     if (!evento) {
       throw new HttpException('Evento não encontrado', HttpStatus.NOT_FOUND);
@@ -62,7 +73,7 @@ export class AttendancesController {
     return this.attendancesService.upsert(
       evento,
       participantes,
-      createAttendanceDto.responsavel,
+      user.id.toString(),
     );
   }
 
@@ -71,16 +82,43 @@ export class AttendancesController {
     type: InfinityPaginationResponse(Attendance),
   })
   async findAll(
-    @Query() query: FindAllAttendancesDto,
+    @Query() query: Partial<FindAllAttendancesDto>,
   ): Promise<InfinityPaginationResponseDto<Attendance>> {
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
+    if (limit > 200) {
+      limit = 200;
     }
 
     return infinityPagination(
       await this.attendancesService.findAllWithPagination({
+        paginationOptions: {
+          page,
+          limit,
+        },
+        query: {
+          evento: query.evento,
+        },
+      }),
+      { page, limit },
+    );
+  }
+
+  @Get('participants')
+  @ApiOkResponse({
+    type: InfinityPaginationResponse(ParticipantEntity),
+  })
+  async findAllParticipants(
+    @Query() query: FindAllAttendancesDto,
+  ): Promise<InfinityPaginationResponseDto<ParticipantEntity>> {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 200) {
+      limit = 200;
+    }
+
+    return infinityPagination(
+      await this.attendancesService.findAllParticipantsWithPagination({
         paginationOptions: {
           page,
           limit,

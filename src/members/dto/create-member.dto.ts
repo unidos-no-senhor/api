@@ -1,4 +1,5 @@
 import {
+  IsDateString,
   IsOptional,
   // decorators here
   IsString,
@@ -10,12 +11,13 @@ import {
 
 export class CreateMemberDto {
   @ApiProperty()
-  @ApiProperty()
   @IsString()
+  @IsOptional()
   observacao: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   situacao: string;
 
   @ApiProperty()
@@ -30,10 +32,12 @@ export class CreateMemberDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   conjuge: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   cep: string;
 
   @ApiProperty()
@@ -42,14 +46,17 @@ export class CreateMemberDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   bairro: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   endereco: string;
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   cargo: string;
 
   @ApiProperty()
@@ -58,11 +65,12 @@ export class CreateMemberDto {
   dataBatismo: string;
 
   @ApiProperty()
-  @IsString()
+  @IsDateString()
   @IsOptional()
   dataNascimento: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   telefone: string;
 
@@ -70,6 +78,7 @@ export class CreateMemberDto {
   @IsString()
   email: string;
 
+  @ApiProperty()
   @IsString()
   nome: string;
 

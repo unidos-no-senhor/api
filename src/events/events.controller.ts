@@ -27,10 +27,11 @@ import {
 } from '../utils/dto/infinity-pagination-response.dto';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { FindAllEventsDto } from './dto/find-all-events.dto';
+import { Roles } from '../roles/roles.decorator';
+import { RoleEnum } from '../roles/roles.enum';
+import { RolesGuard } from '../roles/roles.guard';
 
 @ApiTags('Events')
-@ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
 @Controller({
   path: 'events',
   version: '1',
@@ -42,6 +43,9 @@ export class EventsController {
   @ApiCreatedResponse({
     type: Event,
   })
+  @ApiBearerAuth()
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   create(@Body() createEventDto: CreateEventDto) {
     return this.eventsService.create(createEventDto);
   }
@@ -55,8 +59,8 @@ export class EventsController {
   ): Promise<InfinityPaginationResponseDto<Event>> {
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;
-    if (limit > 50) {
-      limit = 50;
+    if (limit > 200) {
+      limit = 200;
     }
 
     return infinityPagination(
@@ -92,6 +96,9 @@ export class EventsController {
   @ApiOkResponse({
     type: Event,
   })
+  @ApiBearerAuth()
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
     return this.eventsService.update(id, updateEventDto);
   }
@@ -102,6 +109,9 @@ export class EventsController {
     type: String,
     required: true,
   })
+  @ApiBearerAuth()
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   remove(@Param('id') id: string) {
     return this.eventsService.remove(id);
   }

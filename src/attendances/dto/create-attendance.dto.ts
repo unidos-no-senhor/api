@@ -1,7 +1,6 @@
 import {
   IsArray,
   IsNotEmpty,
-  IsNumberString,
   IsString,
   IsUUID,
 } from 'class-validator';
@@ -12,15 +11,11 @@ import {
 
 export class CreateAttendanceDto {
   @ApiProperty()
-  @IsNumberString()
-  @IsNotEmpty()
-  responsavel: string;
-
-  @ApiProperty()
   @IsArray()
   @IsNotEmpty()
   participante: string[];
 
+  @ApiProperty()
   @IsUUID('4')
   @IsString()
   @IsNotEmpty()

@@ -5,6 +5,7 @@ import { Attendance } from './domain/attendance';
 import { Event } from '../events/domain/event';
 import { ParticipantEntity } from './infrastructure/persistence/relational/entities/participant.entity';
 import { AttendanceEntity } from './infrastructure/persistence/relational/entities/attendance.entity';
+import { FindAllAttendancesDto } from './dto/find-all-attendances.dto';
 
 @Injectable()
 export class AttendancesService {
@@ -17,7 +18,9 @@ export class AttendancesService {
   ) {
     // Se todos os participantes foram removidos da lista de presença, deleta a lista de presença
     if (participantes.length === 0) {
-      return await this.attendanceRepository.removeByEventId(evento.id);
+      return await this.attendanceRepository.removeParticipantsByEventId(
+        evento.id,
+      );
     }
 
     const participantesIds = participantes.map(
@@ -84,13 +87,18 @@ export class AttendancesService {
 
   findAllWithPagination({
     paginationOptions,
+    query,
   }: {
     paginationOptions: IPaginationOptions;
+    query?: Partial<FindAllAttendancesDto>;
   }) {
     return this.attendanceRepository.findAllWithPagination({
       paginationOptions: {
         page: paginationOptions.page,
         limit: paginationOptions.limit,
+      },
+      query: {
+        evento: query?.evento,
       },
     });
   }
@@ -101,6 +109,16 @@ export class AttendancesService {
     return await this.attendanceRepository.findAllParticipantesInArray(
       participantsIds,
     );
+  }
+
+  async findAllParticipantsWithPagination({
+    paginationOptions,
+  }: {
+    paginationOptions: IPaginationOptions;
+  }) {
+    return this.attendanceRepository.findAllParticipantsWithPagination({
+      paginationOptions,
+    });
   }
 
   findOne(id: Attendance['id']) {
