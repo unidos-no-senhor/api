@@ -31,8 +31,8 @@ export class UserEntity extends EntityRelationalHelper {
   @ApiProperty({
     type: Number,
   })
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ApiProperty({
     type: String,
