@@ -4,9 +4,9 @@ import { AttendancesController } from './attendances.controller';
 import { RelationalAttendancePersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
 import { EventsModule } from '../events/events.module';
 import { AuthModule } from '../auth/auth.module';
-
+import { MembersModule } from '../members/members.module';
 @Module({
-  imports: [RelationalAttendancePersistenceModule, EventsModule, AuthModule],
+  imports: [RelationalAttendancePersistenceModule, EventsModule, AuthModule, MembersModule],
   controllers: [AttendancesController],
   providers: [AttendancesService],
   exports: [AttendancesService, RelationalAttendancePersistenceModule],

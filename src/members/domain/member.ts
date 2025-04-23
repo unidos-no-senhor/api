@@ -2,46 +2,46 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class Member {
   @ApiProperty()
-  observacao: string;
+  observacao: string | null;
 
   @ApiProperty()
-  situacao: string;
+  situacao: string | null;
 
   @ApiProperty()
-  dataSaida: string;
+  dataSaida: string | null;
 
   @ApiProperty()
-  dataEntrada: string;
+  dataEntrada: string | null;
 
   @ApiProperty()
-  conjuge: string;
+  conjuge: string | null;
 
   @ApiProperty()
-  cep: string;
+  cep: string | null;
 
   @ApiProperty()
-  cidade: string;
+  cidade: string | null;
 
   @ApiProperty()
-  bairro: string;
+  bairro: string | null;
 
   @ApiProperty()
-  endereco: string;
+  endereco: string | null;
 
   @ApiProperty()
-  cargo: string;
+  cargo: string | null;
 
   @ApiProperty()
-  dataBatismo: string;
+  dataBatismo: string | null;
 
   @ApiProperty()
-  dataNascimento: string;
+  dataNascimento: string | null;
 
   @ApiProperty()
-  telefone: string;
+  telefone: string | null;
 
   @ApiProperty()
-  email: string;
+  email: string | null;
 
   @ApiProperty()
   nome: string;
@@ -52,8 +52,8 @@ export class Member {
   id: string;
 
   @ApiProperty()
-  createdAt: Date;
+  createdAt: Date | null;
 
   @ApiProperty()
-  updatedAt: Date;
+  updatedAt: Date | null;
 }

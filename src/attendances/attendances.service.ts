@@ -6,10 +6,17 @@ import { Event } from '../events/domain/event';
 import { ParticipantEntity } from './infrastructure/persistence/relational/entities/participant.entity';
 import { AttendanceEntity } from './infrastructure/persistence/relational/entities/attendance.entity';
 import { FindAllAttendancesDto } from './dto/find-all-attendances.dto';
-
+import { CreateParticipantDto } from './dto/create-participant.dto';
+import { ParticipantRepository } from './infrastructure/persistence/participant.repository';
+import { MemberRepository } from '../members/infrastructure/persistence/member.repository';
+import { FindAllParticipantsDto } from './dto/find-all-participants.dto';
 @Injectable()
 export class AttendancesService {
-  constructor(private readonly attendanceRepository: AttendanceRepository) {}
+  constructor(
+    private readonly attendanceRepository: AttendanceRepository,
+    private readonly participantRepository: ParticipantRepository,
+    private readonly memberRepository: MemberRepository,
+  ) {}
 
   async upsert(
     evento: Event,
@@ -103,6 +110,31 @@ export class AttendancesService {
     });
   }
 
+  async createParticipant(createParticipantDto: CreateParticipantDto) {
+    if (!createParticipantDto.membro_id) {
+      const member = await this.memberRepository.create({
+        nome: String(createParticipantDto.nome),
+        situacao: 'VISITANTE',
+        observacao: null,
+        dataSaida: null,
+        dataEntrada: null,
+        conjuge: null,
+        cep: null,
+        cidade: null,
+        bairro: null,
+        endereco: null,
+        cargo: null,
+        dataBatismo: null,
+        dataNascimento: null,
+        telefone: null,
+        email: null
+      });
+
+      createParticipantDto.membro_id = member.id || '';
+    }
+    return this.participantRepository.create(createParticipantDto);
+  }
+
   async findAllParticipantesInArray(
     participantsIds: ParticipantEntity['id'][],
   ) {
@@ -113,11 +145,20 @@ export class AttendancesService {
 
   async findAllParticipantsWithPagination({
     paginationOptions,
+    query,
   }: {
     paginationOptions: IPaginationOptions;
+    query?: Partial<FindAllParticipantsDto>;
   }) {
     return this.attendanceRepository.findAllParticipantsWithPagination({
-      paginationOptions,
+      paginationOptions: {
+        page: paginationOptions.page,
+        limit: paginationOptions.limit,
+      },
+      query: {
+        membro_id: query?.membro_id,
+        nome: query?.nome,
+      },
     });
   }
 

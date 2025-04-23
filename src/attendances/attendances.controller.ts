@@ -31,6 +31,8 @@ import { FindAllAttendancesDto } from './dto/find-all-attendances.dto';
 import { EventsService } from '../events/events.service';
 import { ParticipantEntity } from './infrastructure/persistence/relational/entities/participant.entity';
 import { AuthService } from '../auth/auth.service';
+import { CreateParticipantDto } from './dto/create-participant.dto';
+import { FindAllParticipantsDto } from './dto/find-all-participants.dto';
 
 @ApiTags('Attendances')
 @ApiBearerAuth()
@@ -109,7 +111,7 @@ export class AttendancesController {
     type: InfinityPaginationResponse(ParticipantEntity),
   })
   async findAllParticipants(
-    @Query() query: FindAllAttendancesDto,
+    @Query() query: FindAllParticipantsDto,
   ): Promise<InfinityPaginationResponseDto<ParticipantEntity>> {
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;
@@ -123,9 +125,21 @@ export class AttendancesController {
           page,
           limit,
         },
+        query: {
+          membro_id: query?.membro_id,
+          nome: query?.nome,
+        },
       }),
       { page, limit },
     );
+  }
+
+  @Post('participants')
+  @ApiOkResponse({
+    type: Attendance,
+  })
+  async createParticipant(@Body() createParticipantDto: CreateParticipantDto) {
+    return this.attendancesService.createParticipant(createParticipantDto);
   }
 
   @Get(':id')

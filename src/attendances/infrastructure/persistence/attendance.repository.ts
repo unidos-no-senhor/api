@@ -4,6 +4,7 @@ import { NullableType } from '../../../utils/types/nullable.type';
 import { IPaginationOptions } from '../../../utils/types/pagination-options';
 import { Attendance } from '../../domain/attendance';
 import { FindAllAttendancesDto } from '../../dto/find-all-attendances.dto';
+import { FindAllParticipantsDto } from '../../dto/find-all-participants.dto';
 import { ParticipantEntity } from './relational/entities/participant.entity';
 
 export abstract class AttendanceRepository {
@@ -48,7 +49,9 @@ export abstract class AttendanceRepository {
 
   abstract findAllParticipantsWithPagination({
     paginationOptions,
+    query,
   }: {
     paginationOptions: IPaginationOptions;
+    query?: Partial<FindAllParticipantsDto>;
   }): Promise<ParticipantEntity[]>;
 }

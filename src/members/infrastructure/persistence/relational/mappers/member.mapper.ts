@@ -28,26 +28,26 @@ export class MemberMapper {
 
   static toPersistence(domainEntity: Member): MemberEntity {
     const persistenceEntity = new MemberEntity();
-    persistenceEntity.observacao = domainEntity.observacao;
-    persistenceEntity.situacao = domainEntity.situacao;
-    persistenceEntity.dataSaida = domainEntity.dataSaida;
-    persistenceEntity.dataEntrada = domainEntity.dataEntrada;
-    persistenceEntity.conjuge = domainEntity.conjuge;
-    persistenceEntity.cep = domainEntity.cep;
-    persistenceEntity.cidade = domainEntity.cidade;
-    persistenceEntity.bairro = domainEntity.bairro;
-    persistenceEntity.endereco = domainEntity.endereco;
-    persistenceEntity.cargo = domainEntity.cargo;
-    persistenceEntity.dataBatismo = domainEntity.dataBatismo;
-    persistenceEntity.dataNascimento = domainEntity.dataNascimento;
-    persistenceEntity.telefone = domainEntity.telefone;
-    persistenceEntity.email = domainEntity.email;
+    persistenceEntity.observacao = domainEntity.observacao || null;
+    persistenceEntity.situacao = domainEntity.situacao || null;
+    persistenceEntity.dataSaida = domainEntity.dataSaida || null;
+    persistenceEntity.dataEntrada = domainEntity.dataEntrada || null;
+    persistenceEntity.conjuge = domainEntity.conjuge || null;
+    persistenceEntity.cep = domainEntity.cep || null;
+    persistenceEntity.cidade = domainEntity.cidade || null;
+    persistenceEntity.bairro = domainEntity.bairro || null;
+    persistenceEntity.endereco = domainEntity.endereco || null;
+    persistenceEntity.cargo = domainEntity.cargo || null;
+    persistenceEntity.dataBatismo = domainEntity.dataBatismo || null;
+    persistenceEntity.dataNascimento = domainEntity.dataNascimento || null;
+    persistenceEntity.telefone = domainEntity.telefone || null;
+    persistenceEntity.email = domainEntity.email || null;
     persistenceEntity.nome = domainEntity.nome;
     if (domainEntity.id) {
       persistenceEntity.id = domainEntity.id;
     }
-    persistenceEntity.createdAt = domainEntity.createdAt;
-    persistenceEntity.updatedAt = domainEntity.updatedAt;
+    persistenceEntity.createdAt = domainEntity.createdAt || new Date();
+    persistenceEntity.updatedAt = domainEntity.updatedAt || new Date();
 
     return persistenceEntity;
   }

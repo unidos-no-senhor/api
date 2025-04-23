@@ -4,18 +4,23 @@ import { UpdateMemberDto } from './dto/update-member.dto';
 import { MemberRepository } from './infrastructure/persistence/member.repository';
 import { IPaginationOptions } from '../utils/types/pagination-options';
 import { Member } from './domain/member';
-import { ParticipantEntity } from '../attendances/infrastructure/persistence/relational/entities/participant.entity';
+import { ParticipantRepository } from '../attendances/infrastructure/persistence/participant.repository';
 
 @Injectable()
 export class MembersService {
-  constructor(private readonly memberRepository: MemberRepository) {}
+  constructor(
+    private readonly memberRepository: MemberRepository,
+    private readonly participantRepository: ParticipantRepository,
+  ) {}
 
   async create(createMemberDto: CreateMemberDto) {
     const member = await this.memberRepository.create(createMemberDto);
-    await ParticipantEntity.create({
-      nome: member.nome,
-      membro_id: member.id,
-    }).save();
+
+    await this.participantRepository.create({
+      nome: member.nome || '',
+      membro_id: member.id || '',
+    });
+
 
     return member;
   }

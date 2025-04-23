@@ -12,46 +12,46 @@ import { EntityRelationalHelper } from '../../../../../utils/relational-entity-h
 })
 export class MemberEntity extends EntityRelationalHelper {
   @Column({ type: 'varchar', length: 190, nullable: true })
-  observacao: string;
+  observacao: string | null;
 
   @Column({ type: 'varchar', length: 190, nullable: true })
-  situacao: string;
+  situacao: string | null;
 
   @Column({ type: 'date', nullable: true })
-  dataSaida: string;
+  dataSaida: string | null;
 
   @Column({ type: 'date', nullable: true })
-  dataEntrada: string;
+  dataEntrada: string | null;
 
   @Column({ type: 'varchar', length: 190, nullable: true })
-  conjuge: string;
+  conjuge: string | null;
 
   @Column({ type: 'varchar', length: 190, nullable: true })
-  cep: string;
+  cep: string | null;
 
   @Column({ type: 'varchar', length: 190, nullable: true })
-  cidade: string;
+  cidade: string | null;
 
   @Column({ type: 'varchar', length: 190, nullable: true })
-  bairro: string;
+  bairro: string | null;
 
   @Column({ type: 'varchar', length: 190, nullable: true })
-  endereco: string;
+  endereco: string | null;
 
   @Column({ type: 'varchar', length: 190, nullable: true })
-  cargo: string;
+  cargo: string | null;
 
   @Column({ type: 'date', nullable: true })
-  dataBatismo: string;
+  dataBatismo: string | null;
 
   @Column({ type: 'date', nullable: true })
-  dataNascimento: string;
+  dataNascimento: string | null;
 
   @Column({ type: 'varchar', length: 190, nullable: true })
-  telefone: string;
+  telefone: string | null;
 
   @Column({ type: 'varchar', length: 190, nullable: true })
-  email: string;
+  email: string | null;
 
   @Column({ type: 'varchar', length: 190 })
   nome: string;

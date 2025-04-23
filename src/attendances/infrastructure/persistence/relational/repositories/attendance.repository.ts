@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { AttendanceEntity } from '../entities/attendance.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { Attendance } from '../../../../domain/attendance';
@@ -10,6 +10,7 @@ import { IPaginationOptions } from '../../../../../utils/types/pagination-option
 import { EventEntity } from '../../../../../events/infrastructure/persistence/relational/entities/event.entity';
 import { ParticipantEntity } from '../entities/participant.entity';
 import { FindAllAttendancesDto } from '../../../../dto/find-all-attendances.dto';
+import { FindAllParticipantsDto } from '../../../../dto/find-all-participants.dto';
 
 @Injectable()
 export class AttendanceRelationalRepository implements AttendanceRepository {
@@ -79,12 +80,18 @@ export class AttendanceRelationalRepository implements AttendanceRepository {
 
   async findAllParticipantsWithPagination({
     paginationOptions,
+    query,
   }: {
     paginationOptions: IPaginationOptions;
+    query?: Partial<FindAllParticipantsDto>;
   }): Promise<ParticipantEntity[]> {
     const entities = await ParticipantEntity.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
+      where: {
+        membro_id: query?.membro_id,
+        nome: Like(`%${query?.nome}%`),
+      },
     });
 
     return entities;
