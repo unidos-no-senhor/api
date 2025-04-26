@@ -4,7 +4,10 @@ import { MembersController } from './members.controller';
 import { RelationalMemberPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
 import { RelationalAttendancePersistenceModule } from '../attendances/infrastructure/persistence/relational/relational-persistence.module';
 @Module({
-  imports: [RelationalMemberPersistenceModule, RelationalAttendancePersistenceModule],
+  imports: [
+    RelationalMemberPersistenceModule,
+    RelationalAttendancePersistenceModule,
+  ],
   controllers: [MembersController],
   providers: [MembersService],
   exports: [MembersService, RelationalMemberPersistenceModule],

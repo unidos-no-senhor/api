@@ -5,6 +5,7 @@ import { IPaginationOptions } from '../../../utils/types/pagination-options';
 import { Attendance } from '../../domain/attendance';
 import { FindAllAttendancesDto } from '../../dto/find-all-attendances.dto';
 import { FindAllParticipantsDto } from '../../dto/find-all-participants.dto';
+import { FindUniqueCodeDto } from '../../dto/find-unique-code.dto';
 import { ParticipantEntity } from './relational/entities/participant.entity';
 
 export abstract class AttendanceRepository {
@@ -20,26 +21,26 @@ export abstract class AttendanceRepository {
     query?: FindAllAttendancesDto;
   }): Promise<Attendance[]>;
 
-  abstract findByEventIdAndListOfParticipantIds(
-    eventId: EventEntity['id'],
+  abstract findByCodeAndListOfParticipantIds(
+    code: string,
     participantIds: ParticipantEntity['id'][],
   ): Promise<Attendance[]>;
 
-  abstract findById(id: Attendance['id']): Promise<NullableType<Attendance>>;
+  abstract findByCode(code: string): Promise<NullableType<Attendance>>;
 
   abstract update(
-    id: Attendance['id'],
+    code: Attendance['code'],
     payload: DeepPartial<Attendance>,
   ): Promise<Attendance | null>;
 
-  abstract remove(id: Attendance['id']): Promise<void>;
+  abstract remove(code: Attendance['code']): Promise<void>;
 
-  abstract removeParticipantsByEventId(
-    eventId: EventEntity['id'],
+  abstract removeParticipantsByCode(
+    code: string,
   ): Promise<void>;
 
-  abstract removeByEventAndParticipantId(
-    eventId: EventEntity['id'],
+  abstract removeByCodeAndParticipantId(
+    code: string,
     participantId: ParticipantEntity['id'],
   ): Promise<void>;
 
@@ -54,4 +55,6 @@ export abstract class AttendanceRepository {
     paginationOptions: IPaginationOptions;
     query?: Partial<FindAllParticipantsDto>;
   }): Promise<ParticipantEntity[]>;
+
+  abstract findUniqueCode(query: FindUniqueCodeDto): Promise<Attendance[]>;
 }

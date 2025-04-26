@@ -2,9 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class Event {
   @ApiProperty()
-  data: string;
-
-  @ApiProperty()
   descricao: string;
 
   @ApiProperty()

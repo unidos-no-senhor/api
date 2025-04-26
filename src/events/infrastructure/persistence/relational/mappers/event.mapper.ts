@@ -4,7 +4,6 @@ import { EventEntity } from '../entities/event.entity';
 export class EventMapper {
   static toDomain(raw: EventEntity): Event {
     const domainEntity = new Event();
-    domainEntity.data = raw.data;
     domainEntity.descricao = raw.descricao;
     domainEntity.nome = raw.nome;
     domainEntity.id = raw.id;
@@ -16,7 +15,6 @@ export class EventMapper {
 
   static toPersistence(domainEntity: Event): EventEntity {
     const persistenceEntity = new EventEntity();
-    persistenceEntity.data = domainEntity.data;
     persistenceEntity.descricao = domainEntity.descricao;
     persistenceEntity.nome = domainEntity.nome;
     if (domainEntity.id) {

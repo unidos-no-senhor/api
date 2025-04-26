@@ -41,7 +41,9 @@ export class ParticipantRelationalRepository implements ParticipantRepository {
     });
   }
 
-  async findById(id: ParticipantEntity['id']): Promise<NullableType<ParticipantEntity>> {
+  async findById(
+    id: ParticipantEntity['id'],
+  ): Promise<NullableType<ParticipantEntity>> {
     return await this.participantRepository.findOne({
       where: { id },
     });

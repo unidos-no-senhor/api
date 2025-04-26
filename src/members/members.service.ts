@@ -21,7 +21,6 @@ export class MembersService {
       membro_id: member.id || '',
     });
 
-
     return member;
   }
 

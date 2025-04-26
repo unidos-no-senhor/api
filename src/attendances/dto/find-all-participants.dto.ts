@@ -15,7 +15,6 @@ export class FindAllParticipantsDto {
   @IsOptional()
   limit?: number;
 
-
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()

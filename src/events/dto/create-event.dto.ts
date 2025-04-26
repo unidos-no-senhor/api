@@ -12,11 +12,6 @@ import {
 
 export class CreateEventDto {
   @ApiProperty()
-  @IsDateString()
-  @IsNotEmpty({ message: 'Data é obrigatório' })
-  data: string;
-
-  @ApiProperty()
   @IsString()
   descricao: string;
 

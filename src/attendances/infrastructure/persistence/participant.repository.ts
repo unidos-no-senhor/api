@@ -18,7 +18,6 @@ export abstract class ParticipantRepository {
     query?: FindAllParticipantsDto;
   }): Promise<Participant[]>;
 
-
   abstract findById(id: Participant['id']): Promise<NullableType<Participant>>;
 
   abstract update(
@@ -27,8 +26,6 @@ export abstract class ParticipantRepository {
   ): Promise<Participant | null>;
 
   abstract remove(id: Participant['id']): Promise<void>;
-
-
 
   abstract findAllParticipantesInArray(
     participantsIds: ParticipantEntity['id'][],

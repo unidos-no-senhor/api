@@ -1,8 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsUUID, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsUUID } from 'class-validator';
 import { Transform } from 'class-transformer';
 
-export class FindAllAttendancesDto {
+export class FindAllEventParticipantsDto {
   @ApiPropertyOptional()
   @Transform(({ value }) => (value ? Number(value) : 1))
   @IsNumber()
@@ -18,10 +18,10 @@ export class FindAllAttendancesDto {
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()
-  evento?: string;
+  evento_id?: string;
 
   @ApiPropertyOptional()
-  @IsString()
+  @IsUUID()
   @IsOptional()
-  code?: string;
+  participante_id?: string;
 }

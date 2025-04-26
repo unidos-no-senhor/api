@@ -33,6 +33,10 @@ import { ParticipantEntity } from './infrastructure/persistence/relational/entit
 import { AuthService } from '../auth/auth.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { FindAllParticipantsDto } from './dto/find-all-participants.dto';
+import { CreateEventParticipantDto } from './dto/create-event-participant.dto';
+import { FindAllEventParticipantsDto } from './dto/find-all-event-participants.dto';
+import { EventParticipantEntity } from './infrastructure/persistence/relational/entities/event-participant.entity';
+import { FindUniqueCodeDto } from './dto/find-unique-code.dto';
 
 @ApiTags('Attendances')
 @ApiBearerAuth()
@@ -46,7 +50,7 @@ export class AttendancesController {
     private readonly attendancesService: AttendancesService,
     private readonly eventsService: EventsService,
     private readonly authService: AuthService,
-  ) {}
+  ) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -67,6 +71,10 @@ export class AttendancesController {
     }
     let participantes: ParticipantEntity[] = [];
     if (createAttendanceDto.participante.length !== 0) {
+      //remove empty strings from the array
+      createAttendanceDto.participante = createAttendanceDto.participante.filter(
+        (participante) => participante !== '',
+      );
       participantes = await this.attendancesService.findAllParticipantesInArray(
         createAttendanceDto.participante,
       );
@@ -76,7 +84,17 @@ export class AttendancesController {
       evento,
       participantes,
       user.id.toString(),
+      createAttendanceDto.date,
+      createAttendanceDto.code,
     );
+  }
+
+  @Get('/unique-code')
+  @ApiOkResponse({
+    type: Attendance,
+  })
+  async findUniqueCode(@Query() query: FindUniqueCodeDto) {
+    return this.attendancesService.findUniqueCode(query);
   }
 
   @Get()
@@ -99,13 +117,35 @@ export class AttendancesController {
           limit,
         },
         query: {
-          evento: query.evento,
+          evento: query?.evento,
+          code: query?.code,
         },
       }),
       { page, limit },
     );
   }
 
+  @Post('event-participants')
+  @ApiOkResponse({
+    type: Attendance,
+  })
+  async createEventParticipant(
+    @Body() createEventParticipantDto: CreateEventParticipantDto,
+  ) {
+    const eventParticipants = await this.attendancesService.createEventParticipant(
+      createEventParticipantDto,
+    );
+
+    return eventParticipants;
+  }
+
+  @Get('event-participants')
+  @ApiOkResponse({
+    type: InfinityPaginationResponse(EventParticipantEntity),
+  })
+  async findAllEventParticipants(@Query() query: FindAllEventParticipantsDto) {
+    return this.attendancesService.findAllEventParticipants(query);
+  }
   @Get('participants')
   @ApiOkResponse({
     type: InfinityPaginationResponse(ParticipantEntity),
@@ -155,13 +195,13 @@ export class AttendancesController {
     return this.attendancesService.findOne(id);
   }
 
-  @Delete(':id')
+  @Delete(':code')
   @ApiParam({
-    name: 'id',
+    name: 'code',
     type: String,
     required: true,
   })
-  remove(@Param('id') id: string) {
-    return this.attendancesService.remove(id);
+  remove(@Param('code') code: string) {
+    return this.attendancesService.remove(code);
   }
 }

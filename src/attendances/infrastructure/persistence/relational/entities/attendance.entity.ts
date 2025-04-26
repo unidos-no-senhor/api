@@ -12,7 +12,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ParticipantEntity } from './participant.entity';
 import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { EventEntity } from '../../../../../events/infrastructure/persistence/relational/entities/event.entity';
-import { IsString } from 'class-validator';
+import { IsDate, IsOptional, IsString } from 'class-validator';
 
 @Entity({
   name: 'attendance',
@@ -20,18 +20,27 @@ import { IsString } from 'class-validator';
 export class AttendanceEntity extends EntityRelationalHelper {
   @ApiProperty()
   @Column()
+  code: string;
+
+  @ApiProperty()
+  @Column('date')
+  @IsDate()
+  date: Date;
+
+  @ApiProperty()
+  @Column()
   @IsString()
   @ManyToOne(() => UserEntity, (user) => user.id)
   responsavel: string;
 
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   @OneToOne(() => ParticipantEntity, (participant) => participant.id)
   participante: string;
 
   @ApiProperty()
   @Column()
-  @ManyToOne(() => EventEntity, (event) => event.id)
+  @ManyToOne(() => EventEntity, (event) => event.id, { onDelete: 'CASCADE' })
   evento: string;
 
   @ApiProperty()

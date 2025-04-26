@@ -4,24 +4,18 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   Column,
+  OneToMany,
 } from 'typeorm';
 import { EntityRelationalHelper } from '../../../../../utils/relational-entity-helper';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { DateFormat } from '../../../../../utils/date-format';
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { AttendanceEntity } from '../../../../../attendances/infrastructure/persistence/relational/entities/attendance.entity';
+import { EventParticipantEntity } from '../../../../../attendances/infrastructure/persistence/relational/entities/event-participant.entity';
 
 @Entity({
   name: 'event',
 })
 export class EventEntity extends EntityRelationalHelper {
-  @ApiProperty()
-  @Transform(({ value }) => {
-    return DateFormat.revert(value);
-  })
-  @Column({ type: 'date' })
-  data: string;
-
   @ApiProperty()
   @Column()
   descricao: string;
@@ -36,6 +30,12 @@ export class EventEntity extends EntityRelationalHelper {
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @OneToMany(() => AttendanceEntity, (attendance) => attendance.evento)
+  attendances: AttendanceEntity[];
+
+  @OneToMany(() => EventParticipantEntity, (eventParticipant) => eventParticipant.event)
+  eventParticipants: EventParticipantEntity[];
 
   @ApiProperty()
   @CreateDateColumn()

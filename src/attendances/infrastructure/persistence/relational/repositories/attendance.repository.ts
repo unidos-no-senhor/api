@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Like, Repository } from 'typeorm';
+import { In, IsNull, Like, Not, Repository } from 'typeorm';
 import { AttendanceEntity } from '../entities/attendance.entity';
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { Attendance } from '../../../../domain/attendance';
 import { AttendanceRepository } from '../../attendance.repository';
 import { AttendanceMapper } from '../mappers/attendance.mapper';
 import { IPaginationOptions } from '../../../../../utils/types/pagination-options';
-import { EventEntity } from '../../../../../events/infrastructure/persistence/relational/entities/event.entity';
 import { ParticipantEntity } from '../entities/participant.entity';
 import { FindAllAttendancesDto } from '../../../../dto/find-all-attendances.dto';
 import { FindAllParticipantsDto } from '../../../../dto/find-all-participants.dto';
+import { FindUniqueCodeDto } from '../../../../dto/find-unique-code.dto';
 
 @Injectable()
 export class AttendanceRelationalRepository implements AttendanceRepository {
@@ -27,27 +27,13 @@ export class AttendanceRelationalRepository implements AttendanceRepository {
     return AttendanceMapper.toDomain(newEntity);
   }
 
-  async findByEventIdAndListOfParticipantIds(
-    eventId: EventEntity['id'],
+  async findByCodeAndListOfParticipantIds(
+    code: string,
     participantIds: ParticipantEntity['id'][],
   ): Promise<Attendance[]> {
     return await this.attendanceRepository.findBy({
-      evento: eventId,
+      code: code,
       participante: In(participantIds),
-    });
-  }
-
-  async removeParticipantsByEventId(eventId: EventEntity['id']): Promise<void> {
-    await this.attendanceRepository.delete({ evento: eventId });
-  }
-
-  async removeByEventAndParticipantId(
-    eventId: EventEntity['id'],
-    participantId: ParticipantEntity['id'],
-  ): Promise<void> {
-    await this.attendanceRepository.delete({
-      evento: eventId,
-      participante: participantId,
     });
   }
 
@@ -60,7 +46,8 @@ export class AttendanceRelationalRepository implements AttendanceRepository {
   }): Promise<Attendance[]> {
     const entities = await this.attendanceRepository.find({
       where: {
-        evento: query.evento,
+        code: query?.code,
+        evento: query?.evento,
       },
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
@@ -90,27 +77,28 @@ export class AttendanceRelationalRepository implements AttendanceRepository {
       take: paginationOptions.limit,
       where: {
         membro_id: query?.membro_id,
-        nome: Like(`%${query?.nome}%`),
+        nome: query?.nome ? Like(`%${query?.nome}%`) : undefined,
+
       },
     });
 
     return entities;
   }
 
-  async findById(id: Attendance['id']): Promise<NullableType<Attendance>> {
+  async findByCode(code: Attendance['code']): Promise<NullableType<Attendance>> {
     const entity = await this.attendanceRepository.findOne({
-      where: { id },
+      where: { code },
     });
 
     return entity ? AttendanceMapper.toDomain(entity) : null;
   }
 
   async update(
-    id: Attendance['id'],
+    code: Attendance['code'],
     payload: Partial<Attendance>,
   ): Promise<Attendance> {
     const entity = await this.attendanceRepository.findOne({
-      where: { id },
+      where: { code },
     });
 
     if (!entity) {
@@ -129,7 +117,31 @@ export class AttendanceRelationalRepository implements AttendanceRepository {
     return AttendanceMapper.toDomain(updatedEntity);
   }
 
-  async remove(id: Attendance['id']): Promise<void> {
-    await this.attendanceRepository.delete(id);
+  async remove(code: Attendance['code']): Promise<void> {
+    await this.attendanceRepository.delete({ code });
+  }
+
+  async removeParticipantsByCode(code: string): Promise<void> {
+    //delete all participants by code except the one with participant empty
+    await this.attendanceRepository.delete({ code, participante: Not('') });
+  }
+
+  async removeByCodeAndParticipantId(
+    code: string,
+    participantId: ParticipantEntity['id'],
+  ): Promise<void> {
+    await this.attendanceRepository.delete({
+      code,
+      participante: participantId,
+    });
+  }
+
+  async findUniqueCode(query: FindUniqueCodeDto): Promise<Attendance[]> {
+    if(query.code){
+      return await this.attendanceRepository.findBy({ code: query.code });
+    }
+    return await this.attendanceRepository.createQueryBuilder('attendance')
+    .select('DISTINCT ON (code) *')
+    .getRawMany();
   }
 }

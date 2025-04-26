@@ -6,8 +6,17 @@ import { AttendanceEntity } from './entities/attendance.entity';
 import { ParticipantRepository } from '../participant.repository';
 import { ParticipantRelationalRepository } from './repositories/participant.repository';
 import { ParticipantEntity } from './entities/participant.entity';
+import { EventParticipantEntity } from './entities/event-participant.entity';
+import { EventParticipantRepository } from '../event-participant.repository';
+import { EventParticipantRelationalRepository } from './repositories/event-participant.repository';
 @Module({
-  imports: [TypeOrmModule.forFeature([AttendanceEntity, ParticipantEntity])],
+  imports: [
+    TypeOrmModule.forFeature([
+      AttendanceEntity,
+      ParticipantEntity,
+      EventParticipantEntity,
+    ]),
+  ],
   providers: [
     {
       provide: AttendanceRepository,
@@ -17,7 +26,15 @@ import { ParticipantEntity } from './entities/participant.entity';
       provide: ParticipantRepository,
       useClass: ParticipantRelationalRepository,
     },
+    {
+      provide: EventParticipantRepository,
+      useClass: EventParticipantRelationalRepository,
+    },
   ],
-  exports: [AttendanceRepository, ParticipantRepository],
+  exports: [
+    AttendanceRepository,
+    ParticipantRepository,
+    EventParticipantRepository,
+  ],
 })
 export class RelationalAttendancePersistenceModule {}

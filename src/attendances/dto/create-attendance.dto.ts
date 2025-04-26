@@ -1,10 +1,25 @@
-import { IsArray, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import {
+  IsArray,
+  IsDate,
+  IsDateString,
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import {
   // decorators here
   ApiProperty,
 } from '@nestjs/swagger';
 
 export class CreateAttendanceDto {
+  @ApiProperty()
+  @IsString()
+  code: string;
+
+  @ApiProperty()
+  @IsDateString()
+  date: Date;
+
   @ApiProperty()
   @IsArray()
   @IsNotEmpty()
